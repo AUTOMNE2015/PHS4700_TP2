@@ -1,8 +1,12 @@
 % Main function.
 function main
+
    Devoir2(1, [-120 0 4.55]);
 end
 
+function y = dt()
+    y = 1;
+end
 function y = Pos0()
 	y = [-18.44 0 2.1];
 end
@@ -20,18 +24,19 @@ function y = ZonePrise()
 end
 
 function y = Devoir2(option, vi)
-    qSol = zeros();
+    deltaT = dt();
+    qSol = zeros(7);
     pos = Pos0();
     qSol(1,:) = [0 vi(1) vi(2) vi(3) pos(1) pos(2) pos(3)];
-    
+    i = 1;
     while( i == 1 || estArrive(qSol(i, :), qSol(i-1,:)) == 0)
         switch option
             case 1
-                qSol(i+1,:) = SEDEuler(qSol(i,:), deltaT, G1(q0, deltaT));
+                qSol(i+1,:) = SEDEuler(qSol(i,:), deltaT, G1(qSol(i,:), deltaT));
              case 2
-                qSol(i+1,:) = SEDEuler(qSol(i,:), deltaT, G2(q0, deltaT));
+                qSol(i+1,:) = SEDEuler(qSol(i,:), deltaT, G2(qSol(i,:), deltaT));
              case 3
-                 qSol(i+1,:) = SEDEuler(qSol(i,:), deltaT, G3(q0, deltaT));
+                 qSol(i+1,:) = SEDEuler(qSol(i,:), deltaT, G3(qSol(i,:), deltaT));
         end
         i = i + 1;
     end
@@ -65,7 +70,7 @@ function qs= SEDEuler (q0 ,Deltat , fonctiong )
     % Ceci est un m- file de matlab
     % qui retourne [1 dq/dt(ti )]
     %
-    qs=q0+ feval ( fonctiong ,q0 )* Deltat ;
+    qs=q0+ fonctiong * Deltat ;
 end
 
 function y = G1(q0, deltaT)
