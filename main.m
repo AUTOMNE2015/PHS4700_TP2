@@ -1,14 +1,19 @@
 % Main function.
 function main
 
-   Devoir2(1, [-120 0 4.55]);
+   tab = Devoir2(1, [-120*1000/3600 0 4.55*1000/3600]);
+   
+    x = tab(:, 5);
+    y = tab(:, 6);
+    z = tab(:, 7);
+    scatter3(x,y,z);
 end
 
 function y = dt()
-    y = 1;
+    y = 0.01;
 end
 function y = Pos0()
-	y = [-18.44 0 2.1];
+	y = [18.44 0 2.1];
 end
 
 function y = db()
@@ -40,6 +45,7 @@ function y = Devoir2(option, vi)
         end
         i = i + 1;
     end
+    y = qSol;
 end
 
 function y = estArrive(q1, q0)
