@@ -1,12 +1,89 @@
 % Main function.
 function main
+    hold on
 
-   tab = Devoir2(1, [-120*1000/3600 0 4.55*1000/3600]);
+% option 1
+   tab1 = Devoir2(1, [-120*1000/3600 0 4.55*1000/3600]);
+
+    x1 = tab1(:, 5);
+    y1 = tab1(:, 6);
+    z1 = tab1(:, 7);
+    
+    scatter3(x1,y1,z1);
+    
+   tab2 = Devoir2(1, [-120*1000/3600 0 7.79*1000/3600]);
    
-    x = tab(:, 5);
-    y = tab(:, 6);
-    z = tab(:, 7);
-    scatter3(x,y,z);
+    x2 = tab2(:, 5);
+    y2 = tab2(:, 6);
+    z2 = tab2(:, 7);
+    
+    scatter3(x2,y2,z2);
+    
+   tab3 = Devoir2(1, [-120*1000/3600 1.8*1000/3600 5.63*1000/3600]);
+   
+    x3 = tab3(:, 5);
+    y3 = tab3(:, 6);
+    z3 = tab3(:, 7);
+    
+    scatter3(x3,y3,z3);
+% option 1 end
+
+% option 2
+   tab21 = Devoir2(2, [-120*1000/3600 0 4.55*1000/3600]);
+
+    x21 = tab21(:, 5);
+    y21 = tab21(:, 6);
+    z21 = tab21(:, 7);
+    
+    scatter3(x21,y21,z21);
+    
+   tab22 = Devoir2(2, [-120*1000/3600 0 7.79*1000/3600]);
+   
+    x22 = tab22(:, 5);
+    y22 = tab22(:, 6);
+    z22 = tab22(:, 7);
+    
+    scatter3(x22,y22,z22);
+    
+   tab23 = Devoir2(2, [-120*1000/3600 1.8*1000/3600 5.63*1000/3600]);
+   
+    x23 = tab23(:, 5);
+    y23 = tab23(:, 6);
+    z23 = tab23(:, 7);
+    
+    scatter3(x23,y23,z23);
+% option 1 end
+
+% option 3
+   tab31 = Devoir2(3, [-120*1000/3600 0 4.55*1000/3600]);
+
+    x31 = tab31(:, 5);
+    y31 = tab31(:, 6);
+    z31 = tab31(:, 7);
+    
+    scatter3(x31,y31,z31);
+    
+   tab32 = Devoir2(3, [-120*1000/3600 0 7.79*1000/3600]);
+   
+    x32 = tab32(:, 5);
+    y32 = tab32(:, 6);
+    z32 = tab32(:, 7);
+    
+    scatter3(x32,y32,z32);
+    
+   tab33 = Devoir2(3, [-120*1000/3600 1.8*1000/3600 5.63*1000/3600]);
+   
+    x33 = tab33(:, 5);
+    y33 = tab33(:, 6);
+    z33 = tab33(:, 7);
+    
+    scatter3(x33,y33,z33);
+% option 1 end
+zp = ZonePrise();
+
+patch( [0 0 0 0], [zp(3) zp(3) zp(1) zp(1)], [zp(4) zp(2) zp(2) zp(4)], [0.5 0.5 0.5])
+
+axis([-15 20 -1 1 0 3]); 
 end
 
 function y = dt()
@@ -17,7 +94,7 @@ function y = Pos0()
 end
 
 function y = db()
-     y = 0.0073;
+     y = 0.073;
 end
 
 function y = mb()
@@ -25,7 +102,24 @@ function y = mb()
 end
 
 function y = ZonePrise()
-     y = [-15.24 0.8 15.25 1.8];
+     y = [-0.1524 0.8 0.1525 1.8];
+end
+
+function y = pAir()
+    y = 1.1644;
+end
+
+function y = Cv()
+    y = 1.45
+end
+
+function y = w()
+    y = [0 0 50];
+end
+
+function y = Cm(w)
+norme = norm(w);
+    y = 1.6*10^(-3)*norme;
 end
 
 function y = Devoir2(option, vi)
@@ -83,8 +177,23 @@ function y = G1(q0, deltaT)
     y = [q0(1)+deltaT 0 0 -9.8 q0(2) q0(3) q0(4)];
 end
 function y = G2(q0, deltaT)
-    y = [q0(1)+deltaT 0 0 -9.8 q0(2) q0(3) q0(4)];
+    norme = norm([q0(2) q0(3) q0(4)]);
+
+    fx = -(((pi*db()*db())/8)*pAir()*Cv()*norme*q0(2))/mb();
+    fy = -(((pi*db()*db())/8)*pAir()*Cv()*norme*q0(3))/mb();
+    fz = -(((pi*db()*db())/8)*pAir()*Cv()*norme*q0(4))/mb() - 9.8;
+
+    y = [q0(1)+deltaT fx fy fz q0(2) q0(3) q0(4)];
 end
+
+
 function y = G3(q0, deltaT)
-    y = [q0(1)+deltaT 0 0 -9.8 q0(2) q0(3) q0(4)];
+    v = [q0(2) q0(3) q0(4)]
+    normeV = norm(v);
+    normeW = norm(w());
+ 
+    f = (cross((((pi*db()*db())/8)*pAir()*Cm(w())*normeV/normeW*w()),v)/mb()) -(((pi*db()*db())/8)*pAir()*Cv()*normeV*v)/mb();
+    
+
+    y = [q0(1)+deltaT f(1) f(2) f(3)-9.8 q0(2) q0(3) q0(4)];
 end
